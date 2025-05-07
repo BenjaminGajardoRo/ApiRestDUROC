@@ -84,7 +84,6 @@ def autenticar(data: AuthRequest):
     user = usuarios.get(data.nombre_usuario)
     if not user or user["password"] != data.contrasena:
         raise HTTPException(status_code=401, detail="Credenciales inválidas")
-    # Simula token
     for token, rol in tokens_validos.items():
         if rol == user["rol"]:
             return {"token": token, "rol": rol}
@@ -95,3 +94,6 @@ def autorizar(data: AutorizarAccesoRequest, rol: str = Depends(get_rol)):
     if rol != data.rol_usuario:
         raise HTTPException(status_code=403, detail="Acceso denegado por rol")
     return {"mensaje": "Acceso autorizado", "recursos": data.recursos}
+
+if __name__ != "__main__":
+    app = app
