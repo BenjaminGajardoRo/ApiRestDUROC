@@ -4,20 +4,23 @@ from typing import List, Optional, Dict
 
 app = FastAPI()
 
-# --- USUARIOS PA PROBAR ---
 usuarios = {
     "admin": {"password": "admin", "rol": "Administrador"},
     "reflauta": {"password": "trompeta", "rol": "Orquestador"},
     "notch": {"password": "creeper", "rol": "Usuario"},
 }
 
+
 servicios = []
 reglas_orquestacion = {}
+
+
 tokens_validos = {
     "token_admin": "Administrador",
     "token_orq": "Orquestador",
     "token_user": "Usuario"
 }
+
 
 class Servicio(BaseModel):
     id: int
@@ -40,13 +43,13 @@ class AutorizarAccesoRequest(BaseModel):
     recursos: List[str]
     rol_usuario: str
 
-# --- Aqui se busca el token ---
+
 def get_rol(token: str = Header(...)):
     if token not in tokens_validos:
         raise HTTPException(status_code=401, detail="Token inválido")
     return tokens_validos[token]
 
-# --- Endpoints ---
+
 
 @app.post("/orquestar")
 def orquestar(data: OrquestacionRequest, rol: str = Depends(get_rol)):
@@ -94,6 +97,3 @@ def autorizar(data: AutorizarAccesoRequest, rol: str = Depends(get_rol)):
     if rol != data.rol_usuario:
         raise HTTPException(status_code=403, detail="Acceso denegado por rol")
     return {"mensaje": "Acceso autorizado", "recursos": data.recursos}
-
-if __name__ != "__main__":
-    app = app
