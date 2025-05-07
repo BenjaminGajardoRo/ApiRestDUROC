@@ -10,17 +10,14 @@ usuarios = {
     "notch": {"password": "creeper", "rol": "Usuario"},
 }
 
-
 servicios = []
 reglas_orquestacion = {}
-
 
 tokens_validos = {
     "token_admin": "Administrador",
     "token_orq": "Orquestador",
     "token_user": "Usuario"
 }
-
 
 class Servicio(BaseModel):
     id: int
@@ -43,13 +40,13 @@ class AutorizarAccesoRequest(BaseModel):
     recursos: List[str]
     rol_usuario: str
 
-
+# Función para obtener el rol desde el encabezado de autorización
 def get_rol(token: str = Header(...)):
     if token not in tokens_validos:
         raise HTTPException(status_code=401, detail="Token inválido")
     return tokens_validos[token]
 
-
+# Rutas de la API
 
 @app.post("/orquestar")
 def orquestar(data: OrquestacionRequest, rol: str = Depends(get_rol)):
@@ -97,3 +94,4 @@ def autorizar(data: AutorizarAccesoRequest, rol: str = Depends(get_rol)):
     if rol != data.rol_usuario:
         raise HTTPException(status_code=403, detail="Acceso denegado por rol")
     return {"mensaje": "Acceso autorizado", "recursos": data.recursos}
+
